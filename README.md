@@ -106,11 +106,11 @@ routeflow_catalog
 
 ### Project Flow
 
-[![architecture](https://github.com/Pratik5767/RouteFlow/raw/main/images/architecture.png)](https://github.com/Pratik5767/RouteFlow/blob/main/images/architecture.png)
+<img src="images/architecture.png" alt="project flow"/>
 
 ### Pipeline Graph
 
-[![pipeline](https://github.com/Pratik5767/RouteFlow/raw/main/images/pipeline_graph.png)](https://github.com/Pratik5767/RouteFlow/blob/main/images/pipeline_graph.png)
+<img src="images/pipeline_graph.png" alt="pipeline graph"/>
 
 ---
 
@@ -181,14 +181,14 @@ routeflow_transportation_pipeline/
 
 ```sql
 -- Run in Databricks notebook
-CREATE CATALOG routeflow_catalog;
-CREATE SCHEMA routeflow_catalog.routeflow_schema;
-CREATE VOLUME routeflow_catalog.routeflow_schema.routeflow_raw_data;
+CREATE CATALOG transportation;
+CREATE SCHEMA transportation.gold;
+CREATE VOLUME transportation.gold.raw_data;
 ```
 
 ### Step 2: Upload CSV Files
 
-- Go to **Data → Volumes → routeflow_raw_data**
+- Go to **Data → Volumes → transportation.gold.raw_data**
 - Upload your CSV files: `trips.csv`, `cities.csv`, `calendar.csv`
 
 ### Step 3: Connect GitHub Repo
@@ -200,15 +200,15 @@ CREATE VOLUME routeflow_catalog.routeflow_schema.routeflow_raw_data;
 ### Step 4: Configure Source Path
 
 ```python
-SOURCE_PATH  = "/Volumes/routeflow_catalog/routeflow_schema/routeflow_raw_data/"
-SCHEMA_PATH  = "/Volumes/routeflow_catalog/routeflow_schema/routeflow_raw_data/_schema"
+SOURCE_PATH  = "/Volumes/transportation.gold.raw_data/"
+SCHEMA_PATH  = "/Volumes/transportation.gold.raw_data/_schema"
 ```
 
 ### Step 5: Run Pipelines
 
 - Open the **Lakeflow Declarative Pipeline** configuration
 - Run Bronze → Silver → Gold in sequence
-- Verify tables appear under `routeflow_catalog → routeflow_schema`
+- Verify tables appear under `transportation → gold`
 
 ### Step 6: Launch Dashboards & Alerts
 
@@ -274,25 +274,25 @@ All Gold layer fact tables share the following schema:
 A single `all_cities_trips` dataset powers every widget on the dashboard. It combines all city-specific Gold tables via a UNION ALL query:
 
 ```sql
-SELECT 'Chandigarh'     AS city, * FROM routeflow_catalog.routeflow_schema.fact_trips_chandigarh
+SELECT 'Chandigarh'     AS city, * FROM transportation.gold.fact_trips_chandigarh
 UNION ALL
-SELECT 'Coimbatore'     AS city, * FROM routeflow_catalog.routeflow_schema.fact_trips_coimbatore
+SELECT 'Coimbatore'     AS city, * FROM transportation.gold.fact_trips_coimbatore
 UNION ALL
-SELECT 'Indore'         AS city, * FROM routeflow_catalog.routeflow_schema.fact_trips_indore
+SELECT 'Indore'         AS city, * FROM transportation.gold.fact_trips_indore
 UNION ALL
-SELECT 'Jaipur'         AS city, * FROM routeflow_catalog.routeflow_schema.fact_trips_jaipur
+SELECT 'Jaipur'         AS city, * FROM transportation.gold.fact_trips_jaipur
 UNION ALL
-SELECT 'Kochi'          AS city, * FROM routeflow_catalog.routeflow_schema.fact_trips_kochi
+SELECT 'Kochi'          AS city, * FROM transportation.gold.fact_trips_kochi
 UNION ALL
-SELECT 'Lucknow'        AS city, * FROM routeflow_catalog.routeflow_schema.fact_trips_lucknow
+SELECT 'Lucknow'        AS city, * FROM transportation.gold.fact_trips_lucknow
 UNION ALL
-SELECT 'Mysore'         AS city, * FROM routeflow_catalog.routeflow_schema.fact_trips_mysore
+SELECT 'Mysore'         AS city, * FROM transportation.gold.fact_trips_mysore
 UNION ALL
-SELECT 'Surat'          AS city, * FROM routeflow_catalog.routeflow_schema.fact_trips_surat
+SELECT 'Surat'          AS city, * FROM transportation.gold.fact_trips_surat
 UNION ALL
-SELECT 'Vadodara'       AS city, * FROM routeflow_catalog.routeflow_schema.fact_trips_vadodara
+SELECT 'Vadodara'       AS city, * FROM transportation.gold.fact_trips_vadodara
 UNION ALL
-SELECT 'Visakhapatnam'  AS city, * FROM routeflow_catalog.routeflow_schema.fact_trips_visakhapatnam
+SELECT 'Visakhapatnam'  AS city, * FROM transportation.gold.fact_trips_visakhapatnam
 ```
 
 A **city dropdown filter** is applied on top — each regional manager sees only their city's data from this one shared dataset.
