@@ -16,6 +16,8 @@
 - [Project Structure](#-project-structure)
 - [How to Run](#-how-to-run)
 - [Gold Layer Tables](#-gold-layer-tables)
+- [Dashboard & Analytics](#-dashboard--analytics)
+- [Exporting the Dashboard](#-exporting-the-dashboard)
 - [Project Outcomes](#-project-outcomes)
 
 ---
@@ -42,17 +44,17 @@ The data team was challenged to run a focused pilot proving that a new declarati
 
 ## ⚙️ Technology Stack
 
-| Component          | Technology                           | Purpose                                |
-| ------------------ | ------------------------------------ | -------------------------------------- |
-| Data Platform      | Databricks Free Edition              | Core processing, notebooks, pipelines  |
-| Pipeline Framework | Lakeflow Spark Declarative Pipelines | Declarative Bronze → Silver → Gold     |
-| Storage Layer      | Databricks Volumes (DBFS)            | Replaces AWS S3 for file ingestion     |
-| Data Governance    | Unity Catalog                        | Catalog, schema, and access management |
-| File Format        | Delta Lake                           | ACID transactions, time travel         |
-| Ingestion          | Auto Loader (cloudFiles)             | Incremental CSV file loading           |
-| Version Control    | GitHub + Databricks Repos            | Notebook and pipeline versioning       |
-| BI & Reporting     | Databricks Dashboards + Genie        | Regional analytics and alerting        |
-| Orchestration      | Databricks Jobs & Workflows          | Scheduled pipeline execution           |
+| Component | Technology | Purpose |
+| --- | --- | --- |
+| Data Platform | Databricks Free Edition | Core processing, notebooks, pipelines |
+| Pipeline Framework | Lakeflow Spark Declarative Pipelines | Declarative Bronze → Silver → Gold |
+| Storage Layer | Databricks Volumes (DBFS) | Replaces AWS S3 for file ingestion |
+| Data Governance | Unity Catalog | Catalog, schema, and access management |
+| File Format | Delta Lake | ACID transactions, time travel |
+| Ingestion | Auto Loader (cloudFiles) | Incremental CSV file loading |
+| Version Control | GitHub + Databricks Repos | Notebook and pipeline versioning |
+| BI & Reporting | Databricks Dashboards + Genie | Regional analytics and alerting |
+| Orchestration | Databricks Jobs & Workflows | Scheduled pipeline execution |
 
 ---
 
@@ -85,11 +87,11 @@ BI Dashboards + Genie + Alerts
 
 ### Medallion Architecture
 
-| Layer     | Tables                              | Description                                                          |
-| --------- | ----------------------------------- | -------------------------------------------------------------------- |
-| 🥉 Bronze | raw_trips, raw_cities, raw_calendar | Raw ingestion with Auto Loader, schema rescue, no transformations    |
-| 🥈 Silver | trips, cities, calendar             | Cleaned data, type casting, date keys, deduplication, SCD logic      |
-| 🥇 Gold   | fact*trips, fact_trips*\<city\>     | BI-ready aggregations, region-partitioned fact tables for dashboards |
+| Layer | Tables | Description |
+| --- | --- | --- |
+| 🥉 Bronze | raw_trips, raw_cities, raw_calendar | Raw ingestion with Auto Loader, schema rescue, no transformations |
+| 🥈 Silver | trips, cities, calendar | Cleaned data, type casting, date keys, deduplication, SCD logic |
+| 🥇 Gold | fact_trips, fact_trips_\<city\> | BI-ready aggregations, region-partitioned fact tables for dashboards |
 
 ### Unity Catalog Structure
 
@@ -104,11 +106,11 @@ routeflow_catalog
 
 ### Project Flow
 
-<img src="images/architecture.png" alt="architecture" />
+[![architecture](https://github.com/Pratik5767/RouteFlow/raw/main/images/architecture.png)](https://github.com/Pratik5767/RouteFlow/blob/main/images/architecture.png)
 
-### Pipeline graph
+### Pipeline Graph
 
-<img src="images/pipeline_graph.png" alt="pipeline"/>
+[![pipeline](https://github.com/Pratik5767/RouteFlow/raw/main/images/pipeline_graph.png)](https://github.com/Pratik5767/RouteFlow/blob/main/images/pipeline_graph.png)
 
 ---
 
@@ -220,31 +222,145 @@ SCHEMA_PATH  = "/Volumes/routeflow_catalog/routeflow_schema/routeflow_raw_data/_
 
 Region-specific fact tables generated in the Gold layer:
 
-| Table                      | Region               |
-| -------------------------- | -------------------- |
-| `fact_trips`               | All regions combined |
-| `fact_trips_chandigarh`    | Chandigarh           |
-| `fact_trips_coimbatore`    | Coimbatore           |
-| `fact_trips_indore`        | Indore               |
-| `fact_trips_jaipur`        | Jaipur               |
-| `fact_trips_kochi`         | Kochi                |
-| `fact_trips_lucknow`       | Lucknow              |
-| `fact_trips_mysore`        | Mysore               |
-| `fact_trips_surat`         | Surat                |
-| `fact_trips_vadodara`      | Vadodara             |
-| `fact_trips_visakhapatnam` | Visakhapatnam        |
+| Table | Region |
+| --- | --- |
+| `fact_trips` | All regions combined |
+| `fact_trips_chandigarh` | Chandigarh |
+| `fact_trips_coimbatore` | Coimbatore |
+| `fact_trips_indore` | Indore |
+| `fact_trips_jaipur` | Jaipur |
+| `fact_trips_kochi` | Kochi |
+| `fact_trips_lucknow` | Lucknow |
+| `fact_trips_mysore` | Mysore |
+| `fact_trips_surat` | Surat |
+| `fact_trips_vadodara` | Vadodara |
+| `fact_trips_visakhapatnam` | Visakhapatnam |
+
+---
+
+## 📈 Dashboard & Analytics
+
+The RouteFlow dashboard is built natively inside **Databricks Dashboards**, connected directly to the Gold layer fact tables. It gives regional managers a real-time, city-specific view of trip analytics — no manual exports needed.
+
+### Gold Layer Schema
+
+All Gold layer fact tables share the following schema:
+
+| Column | Description |
+| --- | --- |
+| `id` | Unique trip identifier |
+| `business_date` | Date of the trip |
+| `city_id` | Unique city identifier |
+| `city_name` | Name of the city |
+| `passenger_category` | Category of the passenger |
+| `distance_kms` | Trip distance in kilometres |
+| `sales_amt` | Fare / revenue generated for the trip |
+| `passenger_rating` | Rating given by the passenger (1–5) |
+| `driver_rating` | Rating given to the driver (1–5) |
+| `month` | Month number |
+| `day_of_month` | Day of the month |
+| `day_of_week` | Day of the week |
+| `month_name` | Full month name |
+| `month_year` | Month and year combined |
+| `quarter` | Quarter number (1–4) |
+| `quarter_year` | Quarter and year combined |
+| `week_of_year` | Week number of the year |
+| `is_weekday` | Boolean — true if weekday |
+| `is_weekend` | Boolean — true if weekend |
+| `national_holiday` | Boolean — true if national holiday |
+
+### Unified Dataset (All Cities)
+
+A single `all_cities_trips` dataset powers every widget on the dashboard. It combines all city-specific Gold tables via a UNION ALL query:
+
+```sql
+SELECT 'Chandigarh'     AS city, * FROM routeflow_catalog.routeflow_schema.fact_trips_chandigarh
+UNION ALL
+SELECT 'Coimbatore'     AS city, * FROM routeflow_catalog.routeflow_schema.fact_trips_coimbatore
+UNION ALL
+SELECT 'Indore'         AS city, * FROM routeflow_catalog.routeflow_schema.fact_trips_indore
+UNION ALL
+SELECT 'Jaipur'         AS city, * FROM routeflow_catalog.routeflow_schema.fact_trips_jaipur
+UNION ALL
+SELECT 'Kochi'          AS city, * FROM routeflow_catalog.routeflow_schema.fact_trips_kochi
+UNION ALL
+SELECT 'Lucknow'        AS city, * FROM routeflow_catalog.routeflow_schema.fact_trips_lucknow
+UNION ALL
+SELECT 'Mysore'         AS city, * FROM routeflow_catalog.routeflow_schema.fact_trips_mysore
+UNION ALL
+SELECT 'Surat'          AS city, * FROM routeflow_catalog.routeflow_schema.fact_trips_surat
+UNION ALL
+SELECT 'Vadodara'       AS city, * FROM routeflow_catalog.routeflow_schema.fact_trips_vadodara
+UNION ALL
+SELECT 'Visakhapatnam'  AS city, * FROM routeflow_catalog.routeflow_schema.fact_trips_visakhapatnam
+```
+
+A **city dropdown filter** is applied on top — each regional manager sees only their city's data from this one shared dataset.
+
+### Dashboard Widgets
+
+| Widget | Type | Metric |
+| --- | --- | --- |
+| Total Trips | Counter | `COUNT(id)` |
+| Total Revenue | Counter | `SUM(sales_amt)` |
+| Avg Passenger Rating | Counter | `AVG(passenger_rating)` |
+| Avg Distance (km) | Counter | `AVG(distance_kms)` |
+| Revenue by Month | Bar Chart | `SUM(sales_amt)` grouped by `month_name` |
+| Daily Trip Trend | Line Chart | `COUNT(id)` grouped by `business_date` |
+| Weekday vs Weekend Performance | Bar Chart | `is_weekday` / `is_weekend` flag |
+| Revenue by Passenger Category | Bar Chart | `SUM(sales_amt)` grouped by `passenger_category` |
+| Revenue Heatmap | Heatmap | `day_of_week` × `month_name` |
+| Quarterly Revenue Trend | Line Chart | `SUM(sales_amt)` grouped by `quarter_year` |
+| Trip Detail Log | Table | Full row-level detail with city filter |
+
+### RouteFlow Dashboard
+
+<img src="images/dashboard.png" alt="routeflow dashboard"/>
+
+---
+
+## 💾 Exporting the Dashboard
+
+Since RouteFlow runs on **Databricks Free Edition**, the dashboard can be exported as a JSON definition file for backup and portability.
+
+### Export as JSON
+
+1. Go to **Dashboards** in the Databricks workspace
+2. Find the RouteFlow dashboard
+3. Click **⋮ (three dots) → Export**
+4. A `.lvdash.json` file is downloaded — this is the full dashboard definition
+
+The exported file is saved in the `/dashboard` folder in this repository.
+
+### Re-import the Dashboard
+
+To restore or share the dashboard in another Databricks workspace:
+
+1. Go to **Dashboards → Import**
+2. Upload the `.lvdash.json` file
+3. The full dashboard is restored with all widgets and queries intact
+
+### Export Data per Widget (CSV)
+
+To download the raw data behind any chart:
+
+1. Click on any widget in the dashboard
+2. Click the **⋮ menu on the widget → Download data**
+3. Choose **CSV** or **Excel**
 
 ---
 
 ## 🎯 Project Outcomes
 
-| Success Criteria                        | Result                                     |
-| --------------------------------------- | ------------------------------------------ |
-| Regional managers get faster insights   | ✅ Region-partitioned Gold tables per city |
-| Manual data rework eliminated           | ✅ Automated pipeline, no exports needed   |
-| Declarative approach demonstrated       | ✅ Lakeflow SDP replaces procedural Spark  |
-| Platform innovation shown to leadership | ✅ Dashboards + Genie + Automated alerts   |
-| Zero cloud cost solution                | ✅ 100% on Databricks Free Edition         |
+| Success Criteria | Result |
+| --- | --- |
+| Regional managers get faster insights | ✅ Region-partitioned Gold tables per city |
+| Manual data rework eliminated | ✅ Automated pipeline, no exports needed |
+| Declarative approach demonstrated | ✅ Lakeflow SDP replaces procedural Spark |
+| Platform innovation shown to leadership | ✅ Dashboards + Genie + Automated alerts |
+| Zero cloud cost solution | ✅ 100% on Databricks Free Edition |
+| City-level dashboard delivered | ✅ 10 regional views from one unified dataset |
+| Dashboard portability | ✅ Exported as `.lvdash.json` for backup & sharing |
 
 ---
 
@@ -252,9 +368,9 @@ Region-specific fact tables generated in the Gold layer:
 
 **Project:** RouteFlow — Regional Data Pipeline for Transportation Analytics  
 **Domain:** Transportation / Cab Services  
-**Platform:** Databricks Free Edition _(No cloud account required)_  
+**Platform:** Databricks Free Edition *(No cloud account required)*  
 **Architecture:** Medallion (Bronze → Silver → Gold) with Lakeflow Spark Declarative Pipelines
 
 ---
 
-> _Built as a learning and portfolio project to demonstrate real-world data engineering skills using modern Databricks tooling._
+> *Built as a learning and portfolio project to demonstrate real-world data engineering skills using modern Databricks tooling.*
