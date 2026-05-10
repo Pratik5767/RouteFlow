@@ -1,0 +1,692 @@
+{
+  "datasets": [
+    {
+      "name": "e96bc8cc",
+      "displayName": "all_cities_trips",
+      "queryLines": [
+        "SELECT \r\n",
+        "    'Chandigarh' AS city, * \r\n",
+        "FROM transportation.gold.fact_trips_chandigarh\r\n",
+        "\r\n",
+        "UNION ALL\r\n",
+        "\r\n",
+        "SELECT \r\n",
+        "    'Coimbatore' AS city, * \r\n",
+        "FROM transportation.gold.fact_trips_coimbatore\r\n",
+        "\r\n",
+        "UNION ALL\r\n",
+        "\r\n",
+        "SELECT \r\n",
+        "    'Indore' AS city, * \r\n",
+        "FROM transportation.gold.fact_trips_indore\r\n",
+        "\r\n",
+        "UNION ALL\r\n",
+        "\r\n",
+        "SELECT \r\n",
+        "    'Jaipur' AS city, * \r\n",
+        "FROM transportation.gold.fact_trips_jaipur\r\n",
+        "\r\n",
+        "UNION ALL\r\n",
+        "\r\n",
+        "SELECT \r\n",
+        "    'Kochi' AS city, * \r\n",
+        "FROM transportation.gold.fact_trips_kochi\r\n",
+        "\r\n",
+        "UNION ALL\r\n",
+        "\r\n",
+        "SELECT \r\n",
+        "    'Lucknow' AS city, * \r\n",
+        "FROM transportation.gold.fact_trips_lucknow\r\n",
+        "\r\n",
+        "UNION ALL\r\n",
+        "\r\n",
+        "SELECT \r\n",
+        "    'Mysore' AS city, * \r\n",
+        "FROM transportation.gold.fact_trips_mysore\r\n",
+        "\r\n",
+        "UNION ALL\r\n",
+        "\r\n",
+        "SELECT \r\n",
+        "    'Surat' AS city, * \r\n",
+        "FROM transportation.gold.fact_trips_surat\r\n",
+        "\r\n",
+        "UNION ALL\r\n",
+        "\r\n",
+        "SELECT \r\n",
+        "    'Vadodara' AS city, * \r\n",
+        "FROM transportation.gold.fact_trips_vadodara\r\n",
+        "\r\n",
+        "UNION ALL\r\n",
+        "\r\n",
+        "SELECT \r\n",
+        "    'Visakhapatnam' AS city, * \r\n",
+        "FROM transportation.gold.fact_trips_visakhapatnam"
+      ],
+      "columns": [
+        {
+          "displayName": "Total Revenue",
+          "description": "Total revenue across all trips, rounded to 2 decimal places",
+          "expression": "ROUND(SUM(sales_amt), 2)"
+        },
+        {
+          "displayName": "Avg Passenger Rating",
+          "description": "Average passenger rating across all trips, rounded to 2 decimal places",
+          "expression": "ROUND(AVG(passenger_rating), 2)"
+        },
+        {
+          "displayName": "Avg Distance",
+          "description": "Avg Distance across all trips, rounded to 2 decimal palces",
+          "expression": "ROUND(AVG(distance_kms), 2)"
+        },
+        {
+          "displayName": "total_trips",
+          "description": "",
+          "expression": "COUNT(id)"
+        },
+        {
+          "displayName": "day_type",
+          "description": "",
+          "expression": "CASE WHEN is_weekday = true THEN 'Weekday' ELSE 'Weekend' END"
+        }
+      ],
+      "catalog": "transportation",
+      "schema": "gold"
+    }
+  ],
+  "pages": [
+    {
+      "name": "003f2471",
+      "displayName": "routeflow visual",
+      "layout": [
+        {
+          "widget": {
+            "name": "total-trips",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "e96bc8cc",
+                  "fields": [
+                    {
+                      "name": "count(*)",
+                      "expression": "COUNT(`*`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showDescription": false,
+                "showTitle": true,
+                "title": "Total Trips"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "count(*)"
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 3,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "total_revenue_counter",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "e96bc8cc",
+                  "fields": [
+                    {
+                      "name": "measure(Total Revenue)",
+                      "expression": "MEASURE(`Total Revenue`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Total Revenue"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(Total Revenue)"
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 3,
+            "y": 0,
+            "width": 3,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "avg_passenger_rating",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "e96bc8cc",
+                  "fields": [
+                    {
+                      "name": "measure(Avg Passenger Rating)",
+                      "expression": "MEASURE(`Avg Passenger Rating`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Avg Passenger Rating"
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(Avg Passenger Rating)"
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 0,
+            "width": 3,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "afaaa983",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "e96bc8cc",
+                  "fields": [
+                    {
+                      "name": "measure(Avg Distance)",
+                      "expression": "MEASURE(`Avg Distance`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(Avg Distance)"
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 9,
+            "y": 0,
+            "width": 3,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "city-dropdown",
+            "queries": [
+              {
+                "name": "dashboards/01f14ae0f2f01ffb84dc9fca51cfee1c/datasets/01f14b7fb70f102f888828c730b62fe2_city_name",
+                "query": {
+                  "datasetName": "e96bc8cc",
+                  "fields": [
+                    {
+                      "name": "city_name",
+                      "expression": "`city_name`"
+                    },
+                    {
+                      "name": "city_name_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "City Dropdown"
+              },
+              "widgetType": "filter-single-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "city_name",
+                    "queryName": "dashboards/01f14ae0f2f01ffb84dc9fca51cfee1c/datasets/01f14b7fb70f102f888828c730b62fe2_city_name"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 2,
+            "width": 6,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "revenue-by-month",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "e96bc8cc",
+                  "fields": [
+                    {
+                      "name": "month_name",
+                      "expression": "`month_name`"
+                    },
+                    {
+                      "name": "measure(Total Revenue)",
+                      "expression": "MEASURE(`Total Revenue`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "Revenue by Month"
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "month_name",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "measure(Total Revenue)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 3,
+            "width": 6,
+            "height": 4
+          }
+        },
+        {
+          "widget": {
+            "name": "daily-trip-trend",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "e96bc8cc",
+                  "fields": [
+                    {
+                      "name": "daily(business_date)",
+                      "expression": "DATE_TRUNC(\"DAY\", `business_date`)"
+                    },
+                    {
+                      "name": "measure(total_trips)",
+                      "expression": "MEASURE(`total_trips`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "Daily Trip Trend"
+              },
+              "widgetType": "line",
+              "encodings": {
+                "x": {
+                  "fieldName": "daily(business_date)",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "fieldName": "measure(total_trips)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 2,
+            "width": 6,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "weekday-weekend-performance",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "e96bc8cc",
+                  "fields": [
+                    {
+                      "name": "day_type",
+                      "expression": "`day_type`"
+                    },
+                    {
+                      "name": "measure(total_trips)",
+                      "expression": "MEASURE(`total_trips`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "Weekday vs Weekend Performance"
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "day_type",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "measure(total_trips)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "label": {
+                  "show": true
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 7,
+            "width": 6,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "revenue-by-passenger-category",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "e96bc8cc",
+                  "fields": [
+                    {
+                      "name": "passenger_category",
+                      "expression": "`passenger_category`"
+                    },
+                    {
+                      "name": "measure(Total Revenue)",
+                      "expression": "MEASURE(`Total Revenue`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "Revenue by Passenger Category"
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "passenger_category",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "measure(Total Revenue)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "label": {
+                  "show": true
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 7,
+            "width": 6,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "revenue-heatmap",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "e96bc8cc",
+                  "fields": [
+                    {
+                      "name": "day_of_week",
+                      "expression": "`day_of_week`"
+                    },
+                    {
+                      "name": "month_name",
+                      "expression": "`month_name`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "Revenue Heatmap — Day vs Month"
+              },
+              "widgetType": "heatmap",
+              "encodings": {
+                "x": {
+                  "fieldName": "day_of_week",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "month_name",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "label": {
+                  "show": false
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 12,
+            "width": 6,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "quarterly-revenue-trend",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "e96bc8cc",
+                  "fields": [
+                    {
+                      "name": "quarter_year",
+                      "expression": "`quarter_year`"
+                    },
+                    {
+                      "name": "measure(Total Revenue)",
+                      "expression": "MEASURE(`Total Revenue`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "Quarterly Revenue Trend"
+              },
+              "widgetType": "line",
+              "encodings": {
+                "x": {
+                  "fieldName": "quarter_year",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "measure(Total Revenue)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "label": {
+                  "show": false
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 12,
+            "width": 6,
+            "height": 5
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    },
+    {
+      "name": "5fd20da8",
+      "displayName": "Global Filters",
+      "layout": [
+        {
+          "widget": {
+            "name": "select-city",
+            "queries": [
+              {
+                "name": "dashboards/01f14ae0f2f01ffb84dc9fca51cfee1c/datasets/01f14b7fb70f102f888828c730b62fe2_city",
+                "query": {
+                  "datasetName": "e96bc8cc",
+                  "fields": [
+                    {
+                      "name": "city",
+                      "expression": "`city`"
+                    },
+                    {
+                      "name": "city_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Select city"
+              },
+              "widgetType": "filter-single-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "city",
+                    "queryName": "dashboards/01f14ae0f2f01ffb84dc9fca51cfee1c/datasets/01f14b7fb70f102f888828c730b62fe2_city"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 1,
+            "height": 2
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_GLOBAL_FILTERS",
+      "layoutVersion": "GRID_V1"
+    }
+  ],
+  "uiSettings": {
+    "theme": {
+      "widgetHeaderAlignment": "ALIGNMENT_UNSPECIFIED"
+    },
+    "applyModeEnabled": false
+  }
+}
